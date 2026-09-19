@@ -97,7 +97,7 @@ main{padding:14px 16px 60px}
 .tog button{border:0;background:var(--panel);padding:6px 10px;color:var(--ink2)}
 .tog button.on{background:var(--acc-soft);color:var(--acc-ink)}
 
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 12px}
 .kpi .l{color:var(--ink2);margin-bottom:3px}
 .kpi .v{font-weight:700;font-variant-numeric:tabular-nums}
@@ -109,7 +109,7 @@ main{padding:14px 16px 60px}
 .twrap{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:auto;max-height:calc(100vh - 170px)}
 table{border-collapse:separate;border-spacing:0;width:100%;min-width:1180px}
 th,td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
-th{position:sticky;top:0;background:var(--panel2);color:var(--ink2);font-weight:400;z-index:5;white-space:nowrap;border-bottom:1px solid var(--line2)}
+th{position:sticky;top:0;background:var(--panel2);color:var(--ink2);font-weight:700;z-index:5;white-space:nowrap;border-bottom:1px solid var(--line2)}
 thead tr:nth-child(2) th{top:26px}
 th.g{text-align:center;border-left:1px solid var(--line2)}
 th.r,td.r{text-align:right}
@@ -120,8 +120,8 @@ td.desc{min-width:340px;max-width:560px}
 td.desc .t{display:block;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 tr.x td.desc .t{-webkit-line-clamp:unset}
 td.desc .t:hover{cursor:default}
-tr.total td{background:var(--cap)}
-tr.cap td{background:var(--cap)}
+tr.total td{background:var(--cap);font-weight:700}
+tr.cap td{background:var(--cap);font-weight:700}
 tr.sub td{background:var(--sub)}
 tr.grp td{background:var(--grp)}
 tr.hdr td{color:var(--ink2);font-style:italic}
@@ -203,14 +203,14 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
           <svg class="ic" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg><span>Dados</span>
         </button>
         <div class="menu">
-          <button data-act="impXlsx">Importar Excel (novo AM)<small>Mesmo formato do ficheiro LPU/AM · tab TN</small></button>
+          <button data-act="impXlsx">Importar Excel (Novo AM)<small>Mesmo formato do ficheiro LPU/AM · Tab TN</small></button>
           <button data-act="expXlsx">Exportar Auto de Situação (XLSX)</button>
           <hr>
-          <button data-act="reset">Repor dados originais do ficheiro<small>Mantém as edições; remove o Excel importado</small></button>
-          <button data-act="clearEdits">Apagar todas as edições</button>
+          <button data-act="reset">Repor Dados Originais<small>Mantém os ajustes; remove o Excel importado</small></button>
+          <button data-act="clearEdits">Apagar Todos os Ajustes</button>
         </div>
       </div>
-      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2619 v1 9290</span>
+      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2619 v1 7490</span>
     </div>
   </div>
 </header>
@@ -377,7 +377,7 @@ function renderNav(){
     const subs = children[c.key].map(k=>byKey[k]).filter(n=>n.type==='sub');
     const on = view.type==='cap' && view.cap===c.key;
     h += `<div class="it" data-cap="${c.key}"><button class="${on?'on':''}"><span class="n">${c.key}</span>${esc(shortName(c.desc))}<span class="car">▼</span></button>
-      <div class="dd"><button class="all ${on&&!view.sub?'on':''}" data-cap="${c.key}" data-sub=""><span class="n">${c.key}</span>${esc(c.desc)} — tudo</button>
+      <div class="dd"><button class="all ${on&&!view.sub?'on':''}" data-cap="${c.key}" data-sub=""><span class="n">${c.key}</span>${esc(c.desc)}</button>
       ${subs.map(s=>`<button class="${on&&view.sub===s.key?'on':''}" data-cap="${c.key}" data-sub="${s.key}"><span class="n">${s.key}</span>${esc(s.desc)}</button>`).join('')}</div></div>`;
   });
   document.getElementById('nav').innerHTML=h;
@@ -396,17 +396,18 @@ function render(){
 function ctrlsHtml(extra=''){
   return `<div class="ctrls">${extra}
     <div class="search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-    <input id="q" placeholder="Pesquisar id ou descrição (palavras)" value="${esc(filter)}"><span class="cnt" id="qcnt"></span></div></div>`;
+    <input id="q" placeholder="Pesquisar Id ou Descrição" value="${esc(filter)}"><span class="cnt" id="qcnt"></span></div></div>`;
 }
 function kpi(l,v,cls='',s=''){ return `<div class="kpi"><div class="l">${l}</div><div class="v ${cls}">${v}</div>${s?`<div class="s">${s}</div>`:''}</div>`; }
 function kpisFor(n){
-  const corrAct = n.act + (n.corr||0);
+  const corrAct = n.act + (n.corr||0), corrSt = n.tot - corrAct;
   return `<div class="kpis">
-    ${kpi('LPU (contratado)',eur(n.tot))}
-    ${kpi('Acumulado faturado',eur(n.act),'acc',pct(n.exec)+' executado')}
-    ${kpi('Saldo por executar',eur(n.st),'',pct(n.falta)+' por fazer')}
-    ${kpi('Correções (ajustes)',eur(n.corr||0),(n.corr||0)<0?'neg':(n.corr||0)>0?'pos':'',countAdj(n)+' linha(s) ajustada(s)')}
-    ${kpi('Acumulado corrigido',eur(corrAct),'warn',pct(n.tot?corrAct/n.tot:null)+' executado real')}
+    ${kpi('LPU',eur(n.tot))}
+    ${kpi('Acumulado',eur(n.act),'acc',pct(n.exec)+' Executado')}
+    ${kpi('Saldo',eur(n.st),'',pct(n.falta)+' Por Executar')}
+    ${kpi('Ajustes',eur(n.corr||0),(n.corr||0)<0?'neg':(n.corr||0)>0?'pos':'',countAdj(n)+' Linha(s) Ajustada(s)')}
+    ${kpi('Acumulado Ajustado',eur(corrAct),'warn',pct(n.tot?corrAct/n.tot:null)+' Executado')}
+    ${kpi('Saldo Ajustado',eur(corrSt),'warn',pct(n.tot?corrSt/n.tot:null)+' Por Executar')}
   </div>`;
 }
 function countAdj(n){ return itemsOf(n.key).filter(i=>edits[i.key]&&edits[i.key].pct).length; }
@@ -415,19 +416,19 @@ function countAdj(n){ return itemsOf(n.key).filter(i=>edits[i.key]&&edits[i.key]
 function renderResumo(){
   const T=byKey['TTN']; const caps=data.rows.filter(r=>r.type==='cap');
   const maxAm = Math.max(...T.amT,1);
-  let h = `<div class="view-h"><h2>Resumo da execução</h2><span class="sub">Trabalhos Normais · ${data.ams.length} autos (${data.ams[0].code} a ${data.ams[data.ams.length-1].code} ${data.ams[data.ams.length-1].mes?'· '+data.ams[data.ams.length-1].mes:''})</span></div>`;
+  let h = `<div class="view-h"><h2>Resumo da Execução</h2><span class="sub">Trabalhos Normais · ${data.ams.length} Autos (${data.ams[0].code} a ${data.ams[data.ams.length-1].code} ${data.ams[data.ams.length-1].mes?'· '+data.ams[data.ams.length-1].mes:''})</span></div>`;
   h += kpisFor(T);
   h += `<div class="two">
-    <div class="panel"><h3>Execução por capítulo (faturado vs corrigido)</h3><div class="bars">`+
+    <div class="panel"><h3>Execução por Capítulo (Faturado vs Ajustado)</h3><div class="bars">`+
     caps.map(c=>{ const ex=c.exec||0, exc=c.tot?(c.act+(c.corr||0))/c.tot:0;
       return `<div class="rowbar"><span><span class="mono" style="color:var(--ink3)">${c.key}</span> ${esc(c.desc)}</span><div class="b"><i style="width:${Math.min(100,ex*100)}%"></i>${c.corr?`<em style="left:${Math.min(100,Math.min(ex,exc)*100)}%;width:${Math.abs(ex-exc)*100}%"></em>`:''}</div><span class="num r" style="text-align:right">${pct(ex)}${c.corr?' → '+pct(exc):''}</span></div>`; }).join('')+
-    `</div><div class="legend"><span><i style="background:var(--acc)"></i>faturado</span><span><i style="background:var(--warn);opacity:.55"></i>diferença após correções</span></div></div>
-    <div class="panel"><h3>Faturação mensal (Total por AM)</h3><div class="mbars">`+
+    `</div><div class="legend"><span><i style="background:var(--acc)"></i>Faturado</span><span><i style="background:var(--warn);opacity:.55"></i>Diferença após Ajustes</span></div></div>
+    <div class="panel"><h3>Faturação Mensal (Total por AM)</h3><div class="mbars">`+
     data.ams.map((a,j)=>`<div class="mbar"><b>${fmt(T.amT[j]/1000,0)}k</b><i style="height:${Math.max(2,T.amT[j]/maxAm*100)}%"></i><span>${a.code.replace('AM ','')}</span></div>`).join('')+
     `</div></div></div>`;
   h += `<div class="twrap" style="margin-top:12px"><table><thead><tr>
-    <th>Id</th><th>Capítulo</th><th class="r">LPU</th><th class="r">Acumulado</th><th class="r">Saldo</th><th class="r">Peso</th><th class="r">Exec.</th><th class="r">Falta</th><th class="r bl">Correções</th><th class="r">Acum. corrigido</th><th class="r">Exec. corrigida</th></tr></thead><tbody>`;
-  const line=(n,cls)=>`<tr class="${cls}"><td class="id">${n.key==='TTN'?'':n.key}</td><td class="desc"><span class="t">${esc(n.desc)}</span></td><td class="num">${eur(n.tot)}</td><td class="num">${eur(n.act)}</td><td class="num">${eur(n.st)}</td><td class="pct">${n.key==='TTN'?'':pct(n.peso)}</td><td class="pct">${pct(n.exec)}</td><td class="pct">${pct(n.falta)}</td><td class="val bl ${n.corr<0?'neg':n.corr>0?'pos':''}">${n.corr?eur(n.corr):'—'}</td><td class="num">${eur(n.act+(n.corr||0))}</td><td class="pct">${pct(n.tot?(n.act+(n.corr||0))/n.tot:null)}</td></tr>`;
+    <th>Id</th><th>Capítulo</th><th class="r">LPU</th><th class="r">Acumulado</th><th class="r">Saldo</th><th class="r">Peso</th><th class="r">Exec.</th><th class="r">Falta</th><th class="r bl">Ajustes</th><th class="r">Acum. Ajustado</th><th class="r">Saldo Ajustado</th><th class="r">Exec. Ajustada</th></tr></thead><tbody>`;
+  const line=(n,cls)=>`<tr class="${cls}"><td class="id">${n.key==='TTN'?'':n.key}</td><td class="desc"><span class="t">${esc(n.desc)}</span></td><td class="num">${eur(n.tot)}</td><td class="num">${eur(n.act)}</td><td class="num">${eur(n.st)}</td><td class="pct">${n.key==='TTN'?'':pct(n.peso)}</td><td class="pct">${pct(n.exec)}</td><td class="pct">${pct(n.falta)}</td><td class="val bl ${n.corr<0?'neg':n.corr>0?'pos':''}">${n.corr?eur(n.corr):'—'}</td><td class="num">${eur(n.act+(n.corr||0))}</td><td class="num">${eur(n.tot-n.act-(n.corr||0))}</td><td class="pct">${pct(n.tot?(n.act+(n.corr||0))/n.tot:null)}</td></tr>`;
   caps.forEach(c=>{ h+=line(c,'cap'); children[c.key].map(k=>byKey[k]).filter(s=>s.type==='sub').forEach(s=>h+=line(s,'sub')); });
   h += line(T,'total') + `</tbody></table></div>`;
   return h;
@@ -437,7 +438,7 @@ function renderResumo(){
 function renderLpuAm(){
   const T=byKey['TTN'];
   const tog = `<div class="tog"><button data-am="both" class="${amMode==='both'?'on':''}">Qtd + Total</button><button data-am="tot" class="${amMode==='tot'?'on':''}">Só Total</button></div>`;
-  let h = `<div class="view-h"><h2>LPU vs Autos de Medição</h2><span class="sub">${data.ams.length} autos · Acumulado ${eur(T.act)} · Saldo ${eur(T.st)}</span>${ctrlsHtml(tog)}</div>`;
+  let h = `<div class="view-h"><h2>LPU vs Autos de Medição</h2><span class="sub">${data.ams.length} Autos · Acumulado ${eur(T.act)} · Saldo ${eur(T.st)}</span>${ctrlsHtml(tog)}</div>`;
   const rows = visibleRows(['TTN']);
   const both = amMode==='both';
   h += `<div class="twrap"><table class="stk"><thead><tr>
@@ -466,12 +467,12 @@ function renderLpuAm(){
 /* ---------- Capítulo / subcapítulo ---------- */
 function renderCap(){
   const root = view.sub || view.cap; const n=byKey[root]; const cap=byKey[view.cap];
-  const chk = `<label class="chk"><input type="checkbox" id="onlyEdited" ${onlyEdited?'checked':''}> só linhas com ajuste/obs.</label>`;
+  const chk = `<label class="chk"><input type="checkbox" id="onlyEdited" ${onlyEdited?'checked':''}> Só Linhas c/Ajuste</label>`;
   let h = `<div class="view-h"><h2><span class="n">${n.key}</span>${esc(n.desc)}</h2>${view.sub?`<span class="sub">${esc(cap.desc)}</span>`:''}${ctrlsHtml(chk)}</div>`;
   h += kpisFor(n);
   const rows = visibleRows([root]);
   h += `<div class="twrap"><table><thead><tr>
-    <th rowspan="2">Id</th><th rowspan="2">Descrição</th><th class="g" colspan="3">LPU</th><th class="g" colspan="2">Acumulado</th><th class="g" colspan="2">Saldo</th><th class="g" colspan="3">% da linha</th><th class="g" colspan="2">Correção</th><th rowspan="2" class="bl">Observações</th></tr>
+    <th rowspan="2">Id</th><th rowspan="2">Descrição</th><th class="g" colspan="3">LPU</th><th class="g" colspan="2">Acumulado</th><th class="g" colspan="2">Saldo</th><th class="g" colspan="3">% da linha</th><th class="g" colspan="2">Ajuste</th><th rowspan="2" class="bl">Observações</th></tr>
     <tr><th class="r bl">Qtd</th><th class="r">Pr. Unit.</th><th class="r">Total</th><th class="r bl">Qtd</th><th class="r">Total</th><th class="r bl">Qtd</th><th class="r">Total</th>
     <th class="r bl" title="Peso da linha no subcapítulo / do subcapítulo no capítulo / do capítulo no total">Peso</th><th class="r" title="Acumulado ÷ LPU">Exec.</th><th class="r" title="Saldo ÷ LPU">Falta</th>
     <th class="r bl" title="Ajuste em % do valor acumulado (− desconta, + acrescenta); se o acumulado for 0, aplica-se ao Total LPU">Ajuste %</th><th class="r" title="Ajuste % × Acumulado (ou × Total LPU se acumulado = 0)">Valor</th></tr></thead><tbody>`;
