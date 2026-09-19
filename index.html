@@ -26,6 +26,7 @@
   --sh:0 1px 2px rgba(0,0,0,.4);
 }
 *{box-sizing:border-box;font-family:"Carlito",Calibri,"Segoe UI",sans-serif}
+h1,h2,h3{font-size:inherit;line-height:inherit}
 html,body{margin:0;height:100%}
 body{background:var(--bg);color:var(--ink);font:400 var(--fs)/1.35 "Carlito",Calibri,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -84,7 +85,7 @@ svg.ic{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;str
 /* ---------- content ---------- */
 main{padding:14px 16px 60px}
 .view-h{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:12px}
-.view-h h2{margin:0;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.view-h h2{margin:0;font-weight:400;text-decoration:underline;text-underline-offset:3px}
 .view-h h2 .n{color:var(--ink3);font-weight:400;margin-right:6px;}
 .view-h .sub{color:var(--ink2)}
 .ctrls{display:flex;align-items:center;gap:8px;margin-left:auto;flex-wrap:wrap}
@@ -93,6 +94,8 @@ main{padding:14px 16px 60px}
 .search svg{position:absolute;left:9px;top:9px;color:var(--ink3)}
 .search .cnt{position:absolute;right:9px;top:8px;color:var(--ink3);}
 .chk{display:flex;align-items:center;gap:5px;color:var(--ink2);white-space:nowrap}
+.chk.val{color:var(--pos)}
+svg.lock{width:12px;height:12px;vertical-align:-2px;color:var(--pos)}
 .tog{display:flex;border:1px solid var(--line2);border-radius:6px;overflow:hidden}
 .tog button{border:0;background:var(--panel);padding:6px 10px;color:var(--ink2)}
 .tog button.on{background:var(--acc-soft);color:var(--acc-ink)}
@@ -109,10 +112,10 @@ main{padding:14px 16px 60px}
 .twrap{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:auto;max-height:calc(100vh - 170px)}
 table{border-collapse:separate;border-spacing:0;width:100%;min-width:1180px}
 th,td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
-th{position:sticky;top:0;background:var(--panel2);color:var(--ink2);font-weight:700;z-index:5;white-space:nowrap;border-bottom:1px solid var(--line2)}
+th{position:sticky;top:0;background:var(--panel2);color:var(--ink2);font-weight:700;text-align:center;z-index:5;white-space:nowrap;border-bottom:1px solid var(--line2)}
 thead tr:nth-child(2) th{top:26px}
 th.g{text-align:center;border-left:1px solid var(--line2)}
-th.r,td.r{text-align:right}
+td.r{text-align:right}
 td.num{text-align:right;white-space:nowrap}
 td.bl,th.bl{border-left:1px solid var(--line2)}
 td.id{white-space:nowrap;color:var(--ink2);}
@@ -146,6 +149,9 @@ tr.hit td.desc .t mark{background:var(--acc-soft);color:var(--acc-ink);border-ra
 .stk tr.grp td.id,.stk tr.grp td.desc{background:var(--grp)}
 .stk td.id{min-width:70px}
 .stk td.desc{min-width:340px;max-width:340px}
+table.fx{table-layout:fixed;width:1808px;min-width:1808px}
+table.fx td.desc{min-width:0;max-width:none}
+table.fx td.obs{min-width:0;max-width:none}
 .empty{padding:40px;text-align:center;color:var(--ink3)}
 .amQ{color:var(--ink3);}
 th.am{min-width:92px}
@@ -208,7 +214,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
           <button data-act="clearEdits">Apagar Todos os Ajustes</button>
         </div>
       </div>
-      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2619 v1 3001</span>
+      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2619 v1 7101</span>
     </div>
   </div>
 </header>
@@ -408,6 +414,10 @@ function kpisFor(n){
     ${kpi('Saldo Ajustado',eur(corrSt),'warn',pct(n.tot?corrSt/n.tot:null)+' Por Executar')}
   </div>`;
 }
+const LOCK='<svg class="ic lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+function isValid(key){ const e=edits['VAL:'+key]; return !!(e&&e.obs); }
+function setValid(key,on){ const k='VAL:'+key; if(on) edits[k]={obs:'1'}; else delete edits[k]; saveEdits(); queueSave(k); }
+function capLocked(c){ const subs=children[c.key].map(k=>byKey[k]).filter(s=>s.type==='sub'); return isValid(c.key) || (subs.length>0 && subs.every(s=>isValid(s.key))); }
 function countAdj(n){ return itemsOf(n.key).filter(i=>edits[i.key]&&edits[i.key].pct).length; }
 
 /* ---------- Resumo ---------- */
@@ -426,7 +436,7 @@ function renderResumo(){
     `</div></div></div>`;
   h += `<div class="twrap" style="margin-top:12px"><table><thead><tr>
     <th>Id</th><th>Capítulo</th><th class="r">LPU</th><th class="r">Acumulado</th><th class="r">Saldo</th><th class="r">Peso</th><th class="r">Exec.</th><th class="r">Falta</th><th class="r bl">Ajustes</th><th class="r">Acum. Ajustado</th><th class="r">Saldo Ajustado</th><th class="r">Exec. Ajustada</th></tr></thead><tbody>`;
-  const line=(n,cls)=>`<tr class="${cls}"><td class="id">${n.key==='TTN'?'':n.key}</td><td class="desc"><span class="t">${esc(n.desc)}</span></td><td class="num">${eur(n.tot)}</td><td class="num">${eur(n.act)}</td><td class="num">${eur(n.st)}</td><td class="pct">${n.key==='TTN'?'':pct(n.peso)}</td><td class="pct">${pct(n.exec)}</td><td class="pct">${pct(n.falta)}</td><td class="val bl ${n.corr<0?'neg':n.corr>0?'pos':''}">${n.corr?eur(n.corr):'—'}</td><td class="num">${eur(n.act+(n.corr||0))}</td><td class="num">${eur(n.tot-n.act-(n.corr||0))}</td><td class="pct">${pct(n.tot?(n.act+(n.corr||0))/n.tot:null)}</td></tr>`;
+  const line=(n,cls)=>`<tr class="${cls}"><td class="id">${n.key==='TTN'?'':n.key}</td><td class="desc"><span class="t">${esc(n.desc)}${(n.type==='sub'&&isValid(n.key))||(n.type==='cap'&&capLocked(n))?' '+LOCK:''}</span></td><td class="num">${eur(n.tot)}</td><td class="num">${eur(n.act)}</td><td class="num">${eur(n.st)}</td><td class="pct">${n.key==='TTN'?'':pct(n.peso)}</td><td class="pct">${pct(n.exec)}</td><td class="pct">${pct(n.falta)}</td><td class="val bl ${n.corr<0?'neg':n.corr>0?'pos':''}">${n.corr?eur(n.corr):'—'}</td><td class="num">${eur(n.act+(n.corr||0))}</td><td class="num">${eur(n.tot-n.act-(n.corr||0))}</td><td class="pct">${pct(n.tot?(n.act+(n.corr||0))/n.tot:null)}</td></tr>`;
   caps.forEach(c=>{ h+=line(c,'cap'); children[c.key].map(k=>byKey[k]).filter(s=>s.type==='sub').forEach(s=>h+=line(s,'sub')); });
   h += line(T,'total') + `</tbody></table></div>`;
   return h;
@@ -465,15 +475,15 @@ function renderLpuAm(){
 /* ---------- Capítulo / subcapítulo ---------- */
 function renderCap(){
   const root = view.sub || view.cap; const n=byKey[root]; const cap=byKey[view.cap];
-  const chk = `<label class="chk"><input type="checkbox" id="onlyEdited" ${onlyEdited?'checked':''}> Só Linhas c/Ajuste</label>`;
-  let h = `<div class="view-h"><h2><span class="n">${n.key}</span>${esc(n.desc)}</h2>${view.sub?`<span class="sub">${esc(cap.desc)}</span>`:''}${ctrlsHtml(chk)}</div>`;
+  const chk = `<label class="chk"><input type="checkbox" id="onlyEdited" ${onlyEdited?'checked':''}> Só Linhas c/Ajuste</label><label class="chk ${isValid(root)?'val':''}" title="${editMode?'Marcar este menu como analisado/validado':'Ative a edição para validar'}"><input type="checkbox" id="validado" ${isValid(root)?'checked':''} ${editMode?'':'disabled'}> Validado ${isValid(root)?LOCK:''}</label>`;
+  let h = `<div class="view-h"><h2><span class="n">${n.key}</span>${esc(n.desc)}</h2>${ctrlsHtml(chk)}</div>`;
   h += kpisFor(n);
   const rows = visibleRows([root]);
-  h += `<div class="twrap"><table><thead><tr>
+  h += `<div class="twrap"><table class="fx"><colgroup><col style="width:60px"><col style="width:500px">${'<col style="width:84px">'.repeat(12)}<col style="width:240px"></colgroup><thead><tr>
     <th rowspan="2">Id</th><th rowspan="2">Descrição</th><th class="g" colspan="3">LPU</th><th class="g" colspan="2">Acumulado</th><th class="g" colspan="2">Saldo</th><th class="g" colspan="3">Peso</th><th class="g" colspan="2">Ajuste</th><th rowspan="2" class="bl">Observações</th></tr>
     <tr><th class="r bl">Qtd</th><th class="r">Pr. Unit.</th><th class="r">Total</th><th class="r bl">Qtd</th><th class="r">Total</th><th class="r bl">Qtd</th><th class="r">Total</th>
-    <th class="r bl" title="Peso da linha no subcapítulo / do subcapítulo no capítulo / do capítulo no total">LPU</th><th class="r" title="Acumulado ÷ LPU">Exec.</th><th class="r" title="Saldo ÷ LPU">Falta</th>
-    <th class="r bl" title="Ajuste em % do valor acumulado (− desconta, + acrescenta); se o acumulado for 0, aplica-se ao Total LPU">Ajuste %</th><th class="r" title="Ajuste % × Acumulado (ou × Total LPU se acumulado = 0)">Valor</th></tr></thead><tbody>`;
+    <th class="r bl" title="Peso da linha no subcapítulo / do subcapítulo no capítulo / do capítulo no total">LPU</th><th class="r" title="Acumulado ÷ LPU">Acum</th><th class="r" title="Saldo ÷ LPU">Saldo</th>
+    <th class="r bl" title="Ajuste em % do valor acumulado (− desconta, + acrescenta); se o acumulado for 0, aplica-se ao Total LPU">%</th><th class="r" title="Ajuste % × Acumulado (ou × Total LPU se acumulado = 0)">Valor</th></tr></thead><tbody>`;
   if(!rows.length) h+=`<tr><td colspan="99" class="empty">Sem resultados.</td></tr>`;
   rows.forEach(({n,hit})=> h+=rowHtml(n,hit));
   h += `</tbody></table></div>`;
@@ -499,6 +509,7 @@ function bindTable(){
   const q=document.getElementById('q');
   if(q){ q.addEventListener('input',()=>{ filter=q.value; const pos=q.selectionStart; render(); const nq=document.getElementById('q'); nq.focus(); nq.setSelectionRange(pos,pos); }); updCount(); }
   const oe=document.getElementById('onlyEdited'); if(oe) oe.addEventListener('change',()=>{ onlyEdited=oe.checked; render(); });
+  const vd=document.getElementById('validado'); if(vd) vd.addEventListener('change',()=>{ setValid(view.sub||view.cap, vd.checked); render(); });
   document.querySelectorAll('[data-am]').forEach(b=>b.addEventListener('click',()=>{ amMode=b.dataset.am; render(); }));
   document.querySelectorAll('td input[data-f]').forEach(inp=>{
     inp.addEventListener('change',()=>onEdit(inp));
