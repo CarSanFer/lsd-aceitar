@@ -208,7 +208,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
           <button data-act="clearEdits">Apagar Todos os Ajustes</button>
         </div>
       </div>
-      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2619 v1 9590</span>
+      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2619 v1 2001</span>
     </div>
   </div>
 </header>
@@ -328,8 +328,8 @@ function subOf(key){ return ancestors(key).find(k=>byKey[k].type==='sub') || (by
 /* ==================== FORMATAÇÃO ==================== */
 function fmt(v,dec=2){ if(v==null||isNaN(v)) return ''; const neg=v<0; const s=Math.abs(v).toFixed(dec); let [i,d]=s.split('.'); i=i.replace(/\B(?=(\d{3})+(?!\d))/g,' '); return (neg?'−':'')+i+(d?','+d:''); }
 function eur(v){ return v==null?'':fmt(v,2)+' €'; }
-function qty(v){ if(v==null||isNaN(v)) return ''; const d = Math.abs(v-Math.round(v))<1e-9?0:(Math.abs(v*100-Math.round(v*100))<1e-6?2:4); return fmt(v,d); }
-function pct(v,dec=1){ return v==null||isNaN(v)?'':fmt(v*100,dec)+'%'; }
+function qty(v){ if(v==null||isNaN(v)) return ''; return fmt(v,3); }
+function pct(v,dec=2){ return v==null||isNaN(v)?'':fmt(v*100,dec)+'%'; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 
@@ -488,8 +488,8 @@ function rowHtml(n,hit){
     <td class="num bl">${isItem?qty(n.q):''}</td><td class="num">${isItem?fmt(n.pu):''}</td><td class="num">${isItem||cont?fmt(n.tot):''}</td>
     <td class="num bl amQ">${isItem?qty(n.acq):''}</td><td class="num">${isItem||cont?fmt(n.act):''}</td>
     <td class="num bl amQ">${isItem?qty(n.sq):''}</td><td class="num">${isItem||cont?fmt(n.st):''}</td>
-    <td class="pct bl ${cont?'':'dim'}">${isItem||cont?pct(n.peso):''}</td><td class="pct ${cont?'':'dim'}">${isItem||cont?pct(n.exec,0):''}</td><td class="pct ${cont?'':'dim'}">${isItem||cont?pct(n.falta,0):''}</td>
-    <td class="adj bl">${isItem?(editMode?`<input type="number" step="1" data-f="pct" value="${e.pct!=null?e.pct:''}" placeholder="%">`:(e.pct?fmt(e.pct,1)+'%':'')):''}</td>
+    <td class="pct bl ${cont?'':'dim'}">${isItem||cont?pct(n.peso):''}</td><td class="pct ${cont?'':'dim'}">${isItem||cont?pct(n.exec):''}</td><td class="pct ${cont?'':'dim'}">${isItem||cont?pct(n.falta):''}</td>
+    <td class="adj bl">${isItem?(editMode?`<input type="number" step="1" data-f="pct" value="${e.pct!=null?e.pct:''}" placeholder="%">`:(e.pct?fmt(e.pct,2)+'%':'')):''}</td>
     <td class="val ${val<0?'neg':val>0?'pos':''}">${val?eur(val):''}</td>
     <td class="obs bl">${editMode?`<input type="text" data-f="obs" value="${esc(e.obs||'')}" placeholder="…">`:`<span class="t">${esc(e.obs||'')}</span>`}</td></tr>`;
 }
