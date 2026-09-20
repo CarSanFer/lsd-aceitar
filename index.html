@@ -13,7 +13,7 @@
   --ink:#1D262C; --ink2:#5A6670; --ink3:#8A949C;
   --acc:#0F6E73; --acc-soft:#D8ECEC; --acc-ink:#0A5256;
   --warn:#9C6B12; --warn-soft:#F6E9CF; --neg:#A8322A; --neg-soft:#F5DCD9; --pos:#2C6E3A; --pos-soft:#DCEBDD;
-  --cap:#E3E7E1; --sub:#EEF1EC; --grp:#F6F7F4;
+  --cap:#E4E6DB; --sub:#EEF1EC; --grp:#F6F7F4; --th:#D9E6E5;
   --sh:0 1px 2px rgba(20,30,40,.08);
   --fs:11px;
 }
@@ -22,7 +22,7 @@
   --ink:#E4E9EC; --ink2:#A7B2BA; --ink3:#6F7B84;
   --acc:#4FB2B7; --acc-soft:#173539; --acc-ink:#8ED6D9;
   --warn:#E0B25E; --warn-soft:#3A2E14; --neg:#E4776F; --neg-soft:#3F1F1C; --pos:#7CC28A; --pos-soft:#1C3521;
-  --cap:#26313A; --sub:#202932; --grp:#1C242B;
+  --cap:#2E3439; --sub:#202932; --grp:#1C242B; --th:#1F3336;
   --sh:0 1px 2px rgba(0,0,0,.4);
 }
 *{box-sizing:border-box;font-family:"Carlito",Calibri,"Segoe UI",sans-serif}
@@ -109,16 +109,24 @@ svg.lock{width:12px;height:12px;vertical-align:-2px;color:var(--pos)}
 .pbar{height:5px;background:var(--panel2);border-radius:3px;overflow:hidden;margin-top:6px}
 .pbar i{display:block;height:100%;background:var(--acc)}
 
-.twrap{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:auto;max-height:calc(100vh - 170px)}
+.twrap{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;padding:0 5px 5px 0}
+.tscroll{overflow:auto;max-height:calc(100vh - 176px);border-radius:7px 0 0 7px}
+.tscroll::-webkit-scrollbar{width:9px;height:9px}
+.tscroll::-webkit-scrollbar-thumb{background:var(--line2);border-radius:5px}
+.tscroll::-webkit-scrollbar-track{background:transparent}
+table.rs{width:100%;min-width:0}
+table.rs td.desc{min-width:0;max-width:none;white-space:nowrap;width:1%;padding-right:24px}
+table.rs td.desc .t{white-space:nowrap;text-align:left;display:inline}
+table.rs th:nth-child(2){text-align:left;padding-left:8px}
 table{border-collapse:separate;border-spacing:0;width:100%;min-width:1180px}
 th,td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
-th{position:sticky;top:0;background:var(--panel2);color:var(--ink2);font-weight:700;text-align:center;z-index:5;white-space:nowrap;border-bottom:1px solid var(--line2)}
+th{position:sticky;top:0;background:var(--th);color:var(--ink2);font-weight:700;text-align:center;z-index:5;white-space:nowrap;border-bottom:1px solid var(--line2)}
 thead tr:nth-child(2) th{top:26px}
 th.g{text-align:center;border-left:1px solid var(--line2)}
 td.r{text-align:right}
 td.num{text-align:right;white-space:nowrap}
 td.bl,th.bl{border-left:1px solid var(--line2)}
-td.id{white-space:nowrap;color:var(--ink2);}
+td.id{white-space:nowrap;color:var(--ink2);padding-right:4px;}
 td.desc{min-width:380px;max-width:620px}
 td.desc .t{display:block;text-align:justify;text-justify:inter-word;hyphens:auto;white-space:pre-line}
 tr.total td{background:var(--cap);font-weight:700}
@@ -143,13 +151,13 @@ tr.hasadj td.adj,tr.hasadj td.val{background:var(--warn-soft)}
 tr.hit td.desc .t mark{background:var(--acc-soft);color:var(--acc-ink);border-radius:2px;padding:0 1px}
 .stk td.id,.stk thead tr:first-child th:nth-child(1){position:sticky;left:0;z-index:3;background:var(--panel)}
 .stk td.desc,.stk thead tr:first-child th:nth-child(2){position:sticky;left:70px;z-index:3;background:var(--panel);box-shadow:1px 0 0 var(--line2)}
-.stk thead tr:first-child th:nth-child(1),.stk thead tr:first-child th:nth-child(2){z-index:6;background:var(--panel2)}
+.stk thead tr:first-child th:nth-child(1),.stk thead tr:first-child th:nth-child(2){z-index:6;background:var(--th)}
 .stk tr.cap td.id,.stk tr.cap td.desc,.stk tr.total td.id,.stk tr.total td.desc{background:var(--cap)}
 .stk tr.sub td.id,.stk tr.sub td.desc{background:var(--sub)}
 .stk tr.grp td.id,.stk tr.grp td.desc{background:var(--grp)}
 .stk td.id{min-width:70px}
 .stk td.desc{min-width:340px;max-width:340px}
-table.fx{table-layout:fixed;width:1808px;min-width:1808px}
+table.fx{table-layout:fixed;width:1674px;min-width:1674px}
 table.fx td.desc{min-width:0;max-width:none}
 table.fx td.obs{min-width:0;max-width:none}
 .empty{padding:40px;text-align:center;color:var(--ink3)}
@@ -159,7 +167,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 14px;border-radius:6px;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .2s;z-index:60}
 .toast.on{opacity:1}
 .bars{display:grid;grid-template-columns:1fr;gap:9px}
-.rowbar{display:grid;grid-template-columns:minmax(0,340px) minmax(120px,1fr) 100px;gap:10px;align-items:center}
+.rowbar{display:grid;grid-template-columns:max-content minmax(120px,1fr) 90px;gap:12px;align-items:center}
 .rowbar>span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rowbar .b{height:12px;background:var(--panel2);border-radius:3px;position:relative;overflow:hidden}
 .rowbar .b i{position:absolute;left:0;top:0;height:100%;background:var(--acc)}
@@ -212,7 +220,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
           <button data-act="clearEdits">Apagar Todos os Ajustes</button>
         </div>
       </div>
-      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2619 v1 3381</span>
+      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2620 v1 3010</span>
     </div>
   </div>
 </header>
@@ -421,11 +429,11 @@ function renderResumo(){
     <div class="panel"><h3>Faturação Mensal (Total por AM)</h3><div class="mbars">`+
     data.ams.map((a,j)=>`<div class="mbar"><b>${fmt(T.amT[j]/1000,0)}k</b><i style="height:${Math.max(2,T.amT[j]/maxAm*100)}%"></i><span>${a.code.replace('AM ','')}</span></div>`).join('')+
     `</div></div></div>`;
-  h += `<div class="twrap" style="margin-top:12px"><table><thead><tr>
+  h += `<div class="twrap rs" style="margin-top:12px"><div class="tscroll"><table class="rs"><thead><tr>
     <th>Id</th><th>Capítulo</th><th class="r">LPU</th><th class="r">Acumulado</th><th class="r">Saldo</th><th class="r">Peso</th><th class="r">Exec.</th><th class="r">Falta</th><th class="r bl">Ajustes</th><th class="r">Acum. Ajustado</th><th class="r">Saldo Ajustado</th><th class="r">Exec. Ajustada</th></tr></thead><tbody>`;
   const line=(n,cls)=>`<tr class="${cls}"><td class="id">${n.key==='TTN'?'':n.key}</td><td class="desc"><span class="t">${esc(n.desc)}${(n.type==='sub'&&isValid(n.key))||(n.type==='cap'&&capLocked(n))?' '+LOCK:''}</span></td><td class="num">${eur(n.tot)}</td><td class="num">${eur(n.act)}</td><td class="num">${eur(n.st)}</td><td class="pct">${n.key==='TTN'?'':pct(n.peso)}</td><td class="pct">${pct(n.exec)}</td><td class="pct">${pct(n.falta)}</td><td class="val bl ${n.corr<0?'neg':n.corr>0?'pos':''}">${n.corr?eur(n.corr):'—'}</td><td class="num">${eur(n.act+(n.corr||0))}</td><td class="num">${eur(n.tot-n.act-(n.corr||0))}</td><td class="pct">${pct(n.tot?(n.act+(n.corr||0))/n.tot:null)}</td></tr>`;
   caps.forEach(c=>{ h+=line(c,'cap'); children[c.key].map(k=>byKey[k]).filter(s=>s.type==='sub').forEach(s=>h+=line(s,'sub')); });
-  h += line(T,'total') + `</tbody></table></div>`;
+  h += line(T,'total') + `</tbody></table></div></div>`;
   return h;
 }
 
@@ -436,7 +444,7 @@ function renderLpuAm(){
   let h = `<div class="view-h"><h2>LPU vs Autos de Medição</h2><span class="sub">${data.ams.length} Autos · Acumulado ${eur(T.act)} · Saldo ${eur(T.st)}</span>${ctrlsHtml(tog)}</div>`;
   const rows = visibleRows(['TTN']);
   const both = amMode==='both';
-  h += `<div class="twrap"><table class="stk"><thead><tr>
+  h += `<div class="twrap"><div class="tscroll"><table class="stk"><thead><tr>
     <th rowspan="2">Id</th><th rowspan="2">Descrição</th><th class="g" colspan="3">LPU</th>
     ${data.ams.map(a=>`<th class="g am" colspan="${both?2:1}">${a.code}<small>${a.mes||'&nbsp;'}</small></th>`).join('')}
     <th class="g" colspan="2">Acumulado</th><th class="g" colspan="2">Saldo</th></tr>
@@ -455,7 +463,7 @@ function renderLpuAm(){
     });
     h += `<td class="num bl amQ">${isItem?qty(n.acq):''}</td><td class="num">${isItem||cont?fmt(n.act):''}</td><td class="num bl amQ">${isItem?qty(n.sq):''}</td><td class="num">${isItem||cont?fmt(n.st):''}</td></tr>`;
   });
-  h += `</tbody></table></div>`;
+  h += `</tbody></table></div></div>`;
   return h;
 }
 
@@ -466,14 +474,14 @@ function renderCap(){
   let h = `<div class="view-h"><h2><span class="n">${n.key}</span>${esc(n.desc)}</h2>${ctrlsHtml(chk)}</div>`;
   h += kpisFor(n);
   const rows = visibleRows([root]);
-  h += `<div class="twrap"><table class="fx"><colgroup><col style="width:60px"><col style="width:500px">${'<col style="width:84px">'.repeat(12)}<col style="width:240px"></colgroup><thead><tr>
+  h += `<div class="twrap"><div class="tscroll"><table class="fx"><colgroup><col style="width:46px"><col style="width:500px">${'<col style="width:74px">'.repeat(12)}<col style="width:240px"></colgroup><thead><tr>
     <th rowspan="2">Id</th><th rowspan="2">Descrição</th><th class="g" colspan="3">LPU</th><th class="g" colspan="2">Acumulado</th><th class="g" colspan="2">Saldo</th><th class="g" colspan="3">Peso</th><th class="g" colspan="2">Ajuste</th><th rowspan="2" class="bl">Observações</th></tr>
     <tr><th class="r bl">Qtd</th><th class="r">Pr. Unit.</th><th class="r">Total</th><th class="r bl">Qtd</th><th class="r">Total</th><th class="r bl">Qtd</th><th class="r">Total</th>
     <th class="r bl" title="Peso da linha no subcapítulo / do subcapítulo no capítulo / do capítulo no total">LPU</th><th class="r" title="Acumulado ÷ LPU">Acum</th><th class="r" title="Saldo ÷ LPU">Saldo</th>
     <th class="r bl" title="Ajuste em % do valor acumulado (− desconta, + acrescenta); se o acumulado for 0, aplica-se ao Total LPU">%</th><th class="r" title="Ajuste % × Acumulado (ou × Total LPU se acumulado = 0)">Valor</th></tr></thead><tbody>`;
   if(!rows.length) h+=`<tr><td colspan="99" class="empty">Sem resultados.</td></tr>`;
   rows.forEach(({n,hit})=> h+=rowHtml(n,hit));
-  h += `</tbody></table></div>`;
+  h += `</tbody></table></div></div>`;
   return h;
 }
 function rowHtml(n,hit){
