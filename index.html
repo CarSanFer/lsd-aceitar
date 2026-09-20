@@ -27,7 +27,8 @@
 }
 *{box-sizing:border-box;font-family:"Carlito",Calibri,"Segoe UI",sans-serif}
 h1,h2,h3{font-size:inherit;line-height:inherit}
-html,body{margin:0;height:100%}
+html{margin:0;min-height:100%}
+body{margin:0;min-height:100vh}
 body{background:var(--bg);color:var(--ink);font:400 var(--fs)/1.35 "Carlito",Calibri,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
@@ -109,8 +110,10 @@ svg.lock{width:12px;height:12px;vertical-align:-2px;color:var(--pos)}
 .pbar{height:5px;background:var(--panel2);border-radius:3px;overflow:hidden;margin-top:6px}
 .pbar i{display:block;height:100%;background:var(--acc)}
 
-.twrap{background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:hidden;padding:0 5px 5px 0}
-.tscroll{overflow:auto;max-height:calc(100vh - 176px);border-radius:7px 0 0 7px}
+.twrap{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:0 5px 5px 0}
+.thw{overflow:hidden;border-radius:7px 0 0 0;position:sticky;z-index:8;background:var(--th)}
+.thw table{margin-bottom:-1px}
+.tscroll{overflow-x:auto;overflow-y:visible;border-radius:0 0 0 7px}
 .tscroll::-webkit-scrollbar{width:9px;height:9px}
 .tscroll::-webkit-scrollbar-thumb{background:var(--line2);border-radius:5px}
 .tscroll::-webkit-scrollbar-track{background:transparent}
@@ -191,8 +194,8 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
 
 <div id="login">
   <form class="card" id="loginForm" autocomplete="off">
-    <h1>Auto de Situação</h1>
-    <p>Largo de São Domingos · Trabalhos Normais</p>
+    <h1>Execução Operacional vs Execução Financeira</h1>
+    <p>Largo de São Domingos</p>
     <input type="password" id="pw" placeholder="Password de acesso" autofocus>
     <button type="submit">Entrar</button>
     <div class="err" id="loginErr"></div>
@@ -220,7 +223,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
           <button data-act="clearEdits">Apagar Todos os Ajustes</button>
         </div>
       </div>
-      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2620 v1 3010</span>
+      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2620 v1 9310</span>
     </div>
   </div>
 </header>
@@ -499,8 +502,28 @@ function rowHtml(n,hit){
     <td class="obs bl">${editMode?`<input type="text" data-f="obs" value="${esc(e.obs||'')}" placeholder="…">`:`<span class="t">${esc(e.obs||'')}</span>`}</td></tr>`;
 }
 
+/* ==================== CABEÇALHO FORA DO SCROLL ==================== */
+function splitTables(){
+  document.querySelectorAll('.twrap').forEach(w=>{
+    const sc=w.querySelector('.tscroll'); const tb=sc&&sc.querySelector('table'); if(!tb||!tb.tHead) return;
+    const row=tb.tBodies[0]&&tb.tBodies[0].rows[0]; if(!row) return;
+    const cells=[...row.cells]; if(cells.some(c=>c.colSpan>1)) return;
+    const widths=cells.map(c=>c.getBoundingClientRect().width); const total=widths.reduce((a,b)=>a+b,0);
+    const cg='<colgroup>'+widths.map(x=>`<col style="width:${x}px">`).join('')+'</colgroup>';
+    const ht=document.createElement('table'); ht.className=tb.className; ht.style.cssText=`table-layout:fixed;width:${total}px;min-width:${total}px`;
+    ht.innerHTML=cg; ht.appendChild(tb.tHead);
+    const hw=document.createElement('div'); hw.className='thw'; hw.appendChild(ht); w.insertBefore(hw,sc);
+    const old=tb.querySelector('colgroup'); if(old) old.remove();
+    tb.insertAdjacentHTML('afterbegin',cg); tb.style.cssText=`table-layout:fixed;width:${total}px;min-width:${total}px`;
+    sc.addEventListener('scroll',()=>{ hw.scrollLeft=sc.scrollLeft; });
+    hw.style.top=document.querySelector('header').offsetHeight+'px';
+  });
+}
+let rsT; window.addEventListener('resize',()=>{ clearTimeout(rsT); rsT=setTimeout(()=>{ if(document.getElementById('login').style.display==='none') render(); },200); });
+
 /* ==================== INTERAÇÃO ==================== */
 function bindTable(){
+  splitTables();
   const q=document.getElementById('q');
   if(q){ q.addEventListener('input',()=>{ filter=q.value; const pos=q.selectionStart; render(); const nq=document.getElementById('q'); nq.focus(); nq.setSelectionRange(pos,pos); }); updCount(); }
   const oe=document.getElementById('onlyEdited'); if(oe) oe.addEventListener('change',()=>{ onlyEdited=oe.checked; render(); });
