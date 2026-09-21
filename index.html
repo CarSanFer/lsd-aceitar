@@ -139,7 +139,8 @@ svg.lock{width:12px;height:12px;vertical-align:-2px;color:var(--pos)}
 .thw{overflow:hidden;border-radius:7px 7px 0 0;position:sticky;z-index:8;background:var(--th)}
 .thw table{margin-bottom:-1px}
 .tscroll{overflow-x:auto;overflow-y:visible;border-radius:0 0 7px 7px}
-.tscroll::-webkit-scrollbar{height:0}
+.tscroll{scrollbar-width:none;-ms-overflow-style:none}
+.tscroll::-webkit-scrollbar{display:none;height:0;width:0}
 .hscroll{position:sticky;bottom:0;overflow-x:auto;overflow-y:hidden;height:12px;background:var(--panel);border-top:1px solid var(--line);border-radius:0 0 7px 7px;z-index:7}
 .hscroll::-webkit-scrollbar{height:9px}
 .hscroll::-webkit-scrollbar-thumb{background:var(--line2);border-radius:5px}
@@ -234,37 +235,41 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
   .pcover .capa-id{margin:0 auto}
   .pcover .capa-id th{text-align:right;padding:1px 14px 1px 0;color:#5A6670} .pcover .capa-id td{padding:1px 0} .pcover .capa-id td{text-align:left}
   .cover .ptext{line-height:1.45;text-align:justify;hyphens:auto;padding:0 2mm;font-size:9pt}
-  .cover .ptext h3{margin:3.5mm 0 1.2mm;color:#3E7EA6;border-bottom:1px solid #D6D9D2;padding-bottom:.8mm}
-  .cover .ptext p{margin:0 0 1.5mm}
+  .cover .ptext h3{margin:6mm 0 3mm;color:#3E7EA6;border-bottom:1px solid #D6D9D2;padding-bottom:.8mm}
+  .cover .ptext p{margin:0 0 2mm}
   .phead{display:flex;align-items:center;gap:10px;background:#EEF4F8;border-left:5px solid #68A0C0;border-radius:4px;padding:6px 10px;margin-bottom:12px;line-height:1.35}
   .plogo-s{width:12mm}
-  .pht{flex:1} .pht b{color:#3E7EA6} .psub{color:#E09850;font-weight:700}
+  .psub{color:#E09850;font-weight:700;font-size:11pt;border-bottom:1px solid #E09850;padding-bottom:1.5mm;margin:0 0 7mm}
   .phead .pr{text-align:right;color:#5A6670}
-  .pkpis{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:12px}
-  .pk{border:1px solid #D6D9D2;border-radius:6px;padding:6px 8px;background:#F6F7F4}
+  .pkpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:8mm}
+  .pk{border:1px solid #D6D9D2;border-radius:6px;padding:8px 10px;background:#F6F7F4}
   .pk .l{color:#5A6670} .pk .v{font-weight:700} .pk .v.acc{color:#3E7EA6} .pk .v.warn{color:#C0742A} .pk .v.neg{color:#A8322A} .pk .s{color:#8A949C}
-  table.pt{font-size:8.5pt;table-layout:auto;min-width:0!important;width:100%;border-collapse:collapse;margin-bottom:12px}
+  table.pt{font-size:8.5pt;table-layout:auto;min-width:0!important;width:100%;border-collapse:collapse;margin-bottom:8mm}
   .capa-id{min-width:0}
-  table.pt th,table.pt td{border:0;border-bottom:1px solid #D6D9D2;padding:3px 4px;text-align:right;vertical-align:top;position:static;background:none;white-space:nowrap}
+  table.pt th,table.pt td{border:0;border-bottom:1px solid #D6D9D2;padding:5px 5px;text-align:right;vertical-align:top;position:static;background:none;white-space:nowrap}
   table.pt td[style*="left"]{white-space:normal}
   table.pt th{background:#DCE9F1;font-weight:700;text-align:center;color:#1D262C}
   table.pt td:first-child{text-align:left;white-space:nowrap}
   table.pt tr.tot td{background:#F7E9DA;font-weight:700}
-  .pb{height:7px;background:#EBEDE8;border-radius:3px;overflow:hidden;margin-top:3px} .pb i{display:block;height:100%;background:#68A0C0}
-  .pm-t{font-weight:700;color:#3E7EA6;margin:6px 0 4px}
-  .pm{display:flex;align-items:flex-end;gap:4px;height:100px;margin-bottom:10px}
+  .pb{height:8px;background:#EBEDE8;border-radius:3px;overflow:hidden;margin-top:3px} .pb i{display:block;height:100%;background:#68A0C0}
+  .pm-t{font-weight:700;color:#3E7EA6;margin:0 0 4mm}
+  .pm{display:flex;align-items:flex-end;gap:5px;height:135px;margin-bottom:8mm}
   .pmb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;color:#8A949C;text-align:center;line-height:1.2}
   .pmb i{width:100%;background:#68A0C0;border-radius:2px 2px 0 0} .pmb b{font-weight:400;color:#5A6670;margin-bottom:2px} .pmb span{margin-top:3px;white-space:nowrap}
-  .pgrid{display:grid;grid-template-columns:1fr 1.3fr;gap:10px;margin-bottom:8px}
-  .pbox{border:1px solid #D6D9D2;border-radius:6px;padding:8px 10px}
-  .pdon{display:flex;align-items:center;gap:12px}
-  .pleg div{margin:3px 0} .pleg i,.pleg2 i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+  .pgrid{display:grid;grid-template-columns:1fr 1.3fr;gap:12px;margin-bottom:8mm}
+  .pbox{border:1px solid #D6D9D2;border-radius:6px;padding:14px 16px}
+  .pdon{display:flex;align-items:center;gap:16px}
+  .pdon svg{width:170px;height:170px}
+  .pleg div{margin:5px 0} .pleg i,.pleg2 i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
   .pnote{margin-top:8px;color:#5A6670} .pnote b{color:#C0742A}
   .pleg2{display:flex;gap:14px;color:#5A6670;margin-top:4px}
-  .hb{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;margin:5px 0}
-  .hbt{height:10px;background:#EBEDE8;border-radius:3px;position:relative;overflow:hidden} .hbt i{position:absolute;left:0;top:0;height:100%} .hbt em{position:absolute;top:0;height:100%;opacity:.7}
+  .hb{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;margin:8px 0}
+  .hbt{height:12px;background:#EBEDE8;border-radius:3px;position:relative;overflow:hidden} .hbt i{position:absolute;left:0;top:0;height:100%} .hbt em{position:absolute;top:0;height:100%;opacity:.7}
   .hb b{font-weight:400;white-space:nowrap}
   .pfoot{margin-top:auto;padding-top:6px;border-top:1px solid #D6D9D2;display:flex;justify-content:space-between;color:#5A6670}
+  .pnum{color:#A7B2BA;font-size:8pt}
+  table.pt.dense th,table.pt.dense td{padding:2.5px 5px}
+  table.pt.dense .pb{margin-top:2px}
   .ng{color:#A8322A}
 }
 </style>
@@ -302,7 +307,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
           <button data-act="clearEdits">Apagar Todos os Ajustes</button>
         </div>
       </div>
-      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2621 v1 2102</span>
+      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2621 v1 4412</span>
     </div>
   </div>
 </header>
@@ -596,10 +601,10 @@ function buildPrint(){
   const kp=(T,name)=>`<div class="pkpis">${card('LPU '+name,eur(T.tot),'')}${card('Acumulado',eur(T.act),pct(T.act/T.tot)+' Executado','acc')}${card('Saldo',eur(T.st),pct(T.st/T.tot)+' Por Executar')}${card('Ajustes',eur(T.corr||0),countAdjP(T)+' Linha(s)',(T.corr||0)<0?'neg':'')}${card('Acumulado Ajustado',eur(T.act+(T.corr||0)),pct((T.act+(T.corr||0))/T.tot)+' Executado','warn')}${card('Saldo Ajustado',eur(T.tot-T.act-(T.corr||0)),pct((T.tot-T.act-(T.corr||0))/T.tot)+' Por Executar','warn')}</div>`;
   function countAdjP(T){ return T===TN?adjTN.length:T===TC?adjTC.length:adjTN.length+adjTC.length; }
   const O={tot,act,st,corr};
-  const rowsTbl=(caps,lab)=>`<table class="pt"><thead><tr><th>Id</th><th style="text-align:left">${lab}</th><th>LPU</th><th>Acumulado</th><th>Saldo</th><th>Exec.</th><th>Ajustes</th><th>Exec. Ajust.</th><th style="width:150px">Execução</th></tr></thead><tbody>${caps.map(c=>{const ex=c.tot?c.act/c.tot:0, exa=c.tot?(c.act+(c.corr||0))/c.tot:0; return `<tr><td>${c.key}</td><td style="text-align:left">${esc(c.desc)}</td><td>${eur(c.tot)}</td><td>${eur(c.act)}</td><td>${eur(c.st)}</td><td>${pct(ex)}</td><td>${c.corr?eur(c.corr):'—'}</td><td>${pct(exa)}</td><td><div class="pb"><i style="width:${Math.min(100,Math.max(0,ex*100))}%"></i></div></td></tr>`;}).join('')}</tbody></table>`;
+  const rowsTbl=(caps,lab)=>`<table class="pt ${caps.length>14?'dense':''}"><thead><tr><th>Id</th><th style="text-align:left">${lab}</th><th>LPU</th><th>Acumulado</th><th>Saldo</th><th>Exec.</th><th>Ajustes</th><th>Exec. Ajust.</th><th style="width:150px">Execução</th></tr></thead><tbody>${caps.map(c=>{const ex=c.tot?c.act/c.tot:0, exa=c.tot?(c.act+(c.corr||0))/c.tot:0; return `<tr><td>${c.key}</td><td style="text-align:left">${esc(c.desc)}</td><td>${eur(c.tot)}</td><td>${eur(c.act)}</td><td>${eur(c.st)}</td><td>${pct(ex)}</td><td>${c.corr?eur(c.corr):'—'}</td><td>${pct(exa)}</td><td><div class="pb"><i style="width:${Math.min(100,Math.max(0,ex*100))}%"></i></div></td></tr>`;}).join('')}</tbody></table>`;
   const months=(ams,lab)=>{ const mx=Math.max(...ams.map(a=>a.v),1); return `<div class="pm-t">${lab}</div><div class="pm">${ams.map(a=>`<div class="pmb"><b>${fmt(a.v/1000,0)}k</b><i style="height:${Math.max(2,a.v/mx*100)}%"></i><span>${a.code.replace('AM ','')}<br>${a.mes}</span></div>`).join('')}</div>`; };
-  const foot=`<div class="pfoot"><span>Análise completa disponível em <b>lsd.aceitar.pt</b> · password de acesso <b>LSD2026</b></span><span>Aceitar Sucessos, Lda. · Fiscalização · 21/09/2026</span></div>`;
-  const head=(t)=>`<div class="phead"><img class="plogo-s" src="${LOGO}" alt=""><div class="pht"><b>Auto de Situação · Largo de São Domingos</b><div class="psub">${t}</div></div><div class="pr">Double Power, Lda. · Fiscalização Aceitar Sucessos, Lda.<br>21/09/2026</div></div>`;
+  const foot=`<div class="pfoot"><span>Análise completa disponível em <b>lsd.aceitar.pt</b> · password de acesso <b>LSD2026</b></span><span class="pnum">__PN__</span></div>`;
+  const head=(t)=>`<div class="psub">${t}</div>`;
   const B='#68A0C0', OR='#E09850';
   const tcPeso=TC.tot/tot, aum=TC.tot/TN.tot;
   // donut composição da obra
@@ -614,7 +619,7 @@ function buildPrint(){
   const order=[...new Set([...amsN.map(a=>a.mes),...amsC.map(a=>a.mes)])]; let run=0; const cum=order.map(m=>{ run+=mm[m]||0; return {m,v:mm[m]||0,c:run}; });
   const mxM=Math.max(...cum.map(x=>x.v),1);
   const cumChart=`<div class="pm">${cum.map(x=>`<div class="pmb"><b>${fmt(x.c/1000,0)}k</b><i style="height:${Math.max(2,x.v/mxM*100)}%;background:${B}"></i><span>${x.m}</span></div>`).join('')}</div>`;
-  return `
+  const html=`
   <section class="pg cover">
     <div class="pcover">
       <img class="plogo" src="${LOGO}" alt="Aceitar">
@@ -633,7 +638,7 @@ function buildPrint(){
     </tbody></table>
     <div class="pgrid">
       <div class="pbox"><div class="pm-t">Composição da Obra</div><div class="pdon">${donut}<div class="pleg"><div><i style="background:${B}"></i>TN · ${eur(TN.tot)} · ${pct(TN.tot/tot,1)}</div><div><i style="background:${OR}"></i>TC · ${eur(TC.tot)} · ${pct(tcPeso,1)}</div><div class="pnote">Os TC representam um aumento de <b>${pct(aum,2)}</b> sobre o valor contratado dos TN.</div></div></div></div>
-      <div class="pbox"><div class="pm-t">Execução Faturada vs Ajustada</div>${exBars}<div class="pleg2"><span><i style="background:${B}"></i>Faturado</span><span><i style="background:${OR}"></i>Diferença após Ajustes</span></div><div class="pm-t" style="margin-top:10px">Acumulado / LPU</div>${stk}</div>
+      <div class="pbox"><div class="pm-t">Execução Faturada vs Ajustada</div>${exBars}<div class="pleg2"><span><i style="background:${B}"></i>Faturado</span><span><i style="background:${OR}"></i>Diferença após Ajustes</span></div><div class="pm-t" style="margin-top:6mm">Acumulado / LPU</div>${stk}</div>
     </div>
     <div class="pm-t">Faturação Mensal da Obra (TN + TC) · valores acumulados por cima das barras</div>${cumChart}
     ${foot}
@@ -660,6 +665,8 @@ function buildPrint(){
     </tbody></table>
     ${foot}
   </section>`:''}`;
+  const n=(html.match(/<section class="pg/g)||[]).length; let i=0;
+  return html.replace(/__PN__/g,()=>`${++i} / ${n}`);
 }
 
 /* ---------- Resumo ---------- */
