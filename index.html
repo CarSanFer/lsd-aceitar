@@ -56,6 +56,8 @@ nav{display:flex;align-items:stretch;gap:2px;flex:1;flex-wrap:wrap}
 .tabs button.on{background:var(--acc);color:#fff}
 .dd-tc{max-height:70vh;overflow:auto;min-width:340px}
 .un{color:var(--ink3)}
+.ng{color:var(--neg)}
+.kpi .v .ng{color:var(--neg)}
 nav .it{position:relative}
 nav .it>button{background:none;border:0;border-radius:6px;padding:6px 9px;color:var(--ink2);font-weight:400;white-space:nowrap;display:flex;align-items:center;gap:5px}
 nav .it>button:hover{background:var(--panel2);color:var(--ink)}
@@ -130,7 +132,6 @@ svg.lock{width:12px;height:12px;vertical-align:-2px;color:var(--pos)}
 table.rs{width:100%;min-width:0}
 table.rs td.desc{min-width:0;max-width:none;white-space:nowrap;width:1%;padding-right:24px}
 table.rs td.desc .t{white-space:nowrap;text-align:left;display:inline}
-table.rs th:nth-child(2){text-align:left;padding-left:8px}
 table{border-collapse:separate;border-spacing:0;width:100%;min-width:1180px}
 th,td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}
 th{position:sticky;top:0;background:var(--th);color:var(--ink2);font-weight:700;text-align:center;z-index:5;white-space:nowrap;border-bottom:1px solid var(--line2)}
@@ -233,7 +234,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
           <button data-act="clearEdits">Apagar Todos os Ajustes</button>
         </div>
       </div>
-      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2621 v1 9451</span>
+      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2621 v1 4081</span>
     </div>
   </div>
 </header>
@@ -348,10 +349,10 @@ function capOf(key){ return ancestors(key).find(k=>byKey[k].type==='cap') || (by
 function subOf(key){ return ancestors(key).find(k=>byKey[k].type==='sub') || (byKey[key].type==='sub'?key:null); }
 
 /* ==================== FORMATAÇÃO ==================== */
-function fmt(v,dec=2){ if(v==null||isNaN(v)) return ''; const s=Math.abs(v).toFixed(dec); const neg=v<0 && Number(s)!==0; let [i,d]=s.split('.'); i=i.replace(/\B(?=(\d{3})+(?!\d))/g,' '); return (neg?'−':'')+i+(d?','+d:''); }
-function eur(v){ return v==null?'':fmt(v,2)+' €'; }
+function fmt(v,dec=2){ if(v==null||isNaN(v)) return ''; const s=Math.abs(v).toFixed(dec); const neg=v<0 && Number(s)!==0; let [i,d]=s.split('.'); i=i.replace(/\B(?=(\d{3})+(?!\d))/g,' '); const out=i+(d?','+d:''); return neg?'<span class="ng">−'+out+'</span>':out; }
+function eur(v){ if(v==null) return ''; const s=fmt(v,2); return s.endsWith('</span>')?s.replace('</span>',' €</span>'):s+' €'; }
 function qty(v){ if(v==null||isNaN(v)) return ''; return fmt(v,3); }
-function pct(v,dec=2){ return v==null||isNaN(v)?'':fmt(v*100,dec)+'%'; }
+function pct(v,dec=2){ if(v==null||isNaN(v)) return ''; const s=fmt(v*100,dec); return s.endsWith('</span>')?s.replace('</span>','%</span>'):s+'%'; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
 
@@ -577,7 +578,7 @@ function onEdit(inp){
   if(!Object.keys(edits[K]).length) delete edits[K];
   saveEdits(); compute(); queueSave(K);
   // update row + ancestors in place
-  [key,...ancestors(key)].forEach(k=>{ const r=document.querySelector(`tr[data-key="${CSS.escape(k)}"]`); if(!r) return; const m=byKey[k]; const val=m.corr||0; const vt=r.querySelector('td.val'); if(vt){ vt.textContent=val?eur(val):''; vt.className='val '+(val<0?'neg':val>0?'pos':''); } if(m.type==='item') r.classList.toggle('hasadj',!!(edits[ek(k)]&&edits[ek(k)].pct)); });
+  [key,...ancestors(key)].forEach(k=>{ const r=document.querySelector(`tr[data-key="${CSS.escape(k)}"]`); if(!r) return; const m=byKey[k]; const val=m.corr||0; const vt=r.querySelector('td.val'); if(vt){ vt.innerHTML=val?eur(val):''; vt.className='val '+(val<0?'neg':val>0?'pos':''); } if(m.type==='item') r.classList.toggle('hasadj',!!(edits[ek(k)]&&edits[ek(k)].pct)); });
   // KPIs
   const root = view.sub||view.cap; if(root){ const wrap=document.querySelector('.kpis'); if(wrap) wrap.outerHTML=kpisFor(byKey[root]); }
 }
