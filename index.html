@@ -225,7 +225,8 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
   html,body{background:#fff!important;color:#1D262C}
   body>*:not(#print){display:none!important}
   #print{display:block;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:9.5pt;line-height:1.35}
-  #print .pkpis .l,#print .pkpis .s,#print .pmb,#print .pfoot,#print .pleg,#print .pleg2{font-size:8.5pt}
+  #print .pkpis{font-size:8.5pt} #print .pkpis .l,#print .pkpis .s,#print .pmb,#print .pfoot,#print .pleg,#print .pleg2{font-size:8pt}
+  #print .pm-t{font-size:9pt}
   .pg{page-break-after:always;position:relative;height:297mm;box-sizing:border-box;padding:11mm 12mm 7mm;display:flex;flex-direction:column;overflow:visible}
   .pg:last-child{page-break-after:auto}
   .plogo{width:27mm;display:block;margin:0 auto 3mm}
@@ -241,10 +242,10 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
   .plogo-s{width:12mm}
   .psub{color:#E09850;font-weight:700;font-size:11pt;border-bottom:1px solid #E09850;padding-bottom:1.5mm;margin:0 0 7mm}
   .phead .pr{text-align:right;color:#5A6670}
-  .pkpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:8mm}
+  .pkpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:11mm}
   .pk{border:1px solid #D6D9D2;border-radius:6px;padding:8px 10px;background:#F6F7F4}
   .pk .l{color:#5A6670} .pk .v{font-weight:700} .pk .v.acc{color:#3E7EA6} .pk .v.warn{color:#C0742A} .pk .v.neg{color:#A8322A} .pk .s{color:#8A949C}
-  table.pt{font-size:8.5pt;table-layout:auto;min-width:0!important;width:100%;border-collapse:collapse;margin-bottom:8mm}
+  table.pt{font-size:8.5pt;table-layout:auto;min-width:0!important;width:100%;border-collapse:collapse;margin-bottom:11mm}
   .capa-id{min-width:0}
   table.pt th,table.pt td{border:0;border-bottom:1px solid #D6D9D2;padding:5px 5px;text-align:right;vertical-align:top;position:static;background:none;white-space:nowrap}
   table.pt td[style*="left"]{white-space:normal}
@@ -254,9 +255,10 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
   .pb{height:8px;background:#EBEDE8;border-radius:3px;overflow:hidden;margin-top:3px} .pb i{display:block;height:100%;background:#68A0C0}
   .pm-t{font-weight:700;color:#3E7EA6;margin:0 0 4mm}
   .pm{display:flex;align-items:flex-end;gap:5px;height:135px;margin-bottom:8mm}
+  .tight .pkpis,.tight table.pt{margin-bottom:6mm} .tight .psub{margin-bottom:5mm}
   .pmb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;color:#8A949C;text-align:center;line-height:1.2}
   .pmb i{width:100%;background:#68A0C0;border-radius:2px 2px 0 0} .pmb b{font-weight:400;color:#5A6670;margin-bottom:2px} .pmb span{margin-top:3px;white-space:nowrap}
-  .pgrid{display:grid;grid-template-columns:1fr 1.3fr;gap:12px;margin-bottom:8mm}
+  .pgrid{display:grid;grid-template-columns:1fr 1.3fr;gap:12px;margin-bottom:11mm;font-size:8.5pt}
   .pbox{border:1px solid #D6D9D2;border-radius:6px;padding:14px 16px}
   .pdon{display:flex;align-items:center;gap:16px}
   .pdon svg{width:170px;height:170px}
@@ -307,7 +309,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
           <button data-act="clearEdits">Apagar Todos os Ajustes</button>
         </div>
       </div>
-      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2621 v1 4332</span>
+      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2622 v1 0200</span>
     </div>
   </div>
 </header>
@@ -534,8 +536,8 @@ function renderCapa(){
   const capsTN=[...new Set(adjTN.map(i=>byKey[capOf(i.key)].desc))];
   useTab('TC'); const adjTC=itemsOf('TTCm').filter(i=>edits[ek(i.key)]&&edits[ek(i.key)].pct); useTab(cur);
   const lst=a=>a.length<=1?a.join(''):a.slice(0,-1).join(', ')+' e '+a[a.length-1];
-  const nc = adjTN.length ? `Foram detetadas ${adjTN.length} situação(ões) não conforme(s) nos TN, em ${lst(capsTN)}, explicadas nos Ajustes.` : 'Não foram detetadas situações não conformes nos TN.';
-  const ncTC = adjTC.length ? ` Nos TC foram detetadas ${adjTC.length} situação(ões), igualmente explicadas nos Ajustes.` : '';
+  const nc = adjTN.length ? `Foram detetadas ${adjTN.length} situações não conformes nos TN, em ${lst(capsTN)}, explicadas nos Ajustes.` : 'Não foram detetadas situações não conformes nos TN.';
+  const ncTC = adjTC.length ? ` Nos TC foram detetadas ${adjTC.length} situações, igualmente explicadas nos Ajustes.` : '';
   const S=capaSections(nc,ncTC,exTN,exTC,exO,exA,act,tot,corr);
   return `<div class="capa-top"><button id="btnPdf" title="Abre o diálogo de impressão — escolha 'Guardar como PDF'"><svg class="ic" viewBox="0 0 24 24"><path d="M6 9V3h12v6"/><rect x="3" y="9" width="18" height="9" rx="2"/><path d="M6 14h12v7H6z"/></svg>Gerar PDF</button></div><div class="capa">
     <div class="capa-h">
@@ -596,8 +598,8 @@ function buildPrint(){
   adjTC.forEach(i=>adjRows.push({key:i.key,cap:byKey[capOf(i.key)].key,sub:'TC',desc:i.desc,act:i.act,pct:edits[ek(i.key)].pct,corr:i.corr,obs:edits[ek(i.key)].obs||''}));
   useTab(cur);
   const lst=a=>a.length<=1?a.join(''):a.slice(0,-1).join(', ')+' e '+a[a.length-1];
-  const nc = adjTN.length ? `Foram detetadas ${adjTN.length} situação(ões) não conforme(s) nos TN, em ${lst(capsTN)}, explicadas nos Ajustes.` : 'Não foram detetadas situações não conformes nos TN.';
-  const ncTC = adjTC.length ? ` Nos TC foram detetadas ${adjTC.length} situação(ões), igualmente explicadas nos Ajustes.` : '';
+  const nc = adjTN.length ? `Foram detetadas ${adjTN.length} situações não conformes nos TN, em ${lst(capsTN)}, explicadas nos Ajustes.` : 'Não foram detetadas situações não conformes nos TN.';
+  const ncTC = adjTC.length ? ` Nos TC foram detetadas ${adjTC.length} situações, igualmente explicadas nos Ajustes.` : '';
   const S=capaSections(nc,ncTC,TN.act/TN.tot,TC.act/TC.tot,act/tot,(act+corr)/tot,act,tot,corr);
   const card=(l,v,s,cls='')=>`<div class="pk"><div class="l">${l}</div><div class="v ${cls}">${v}</div><div class="s">${s}</div></div>`;
   const kp=(T,name)=>`<div class="pkpis">${card('LPU '+name,eur(T.tot),'')}${card('Acumulado',eur(T.act),pct(T.act/T.tot)+' Executado','acc')}${card('Saldo',eur(T.st),pct(T.st/T.tot)+' Por Executar')}${card('Ajustes',eur(T.corr||0),countAdjP(T)+' Linha(s)',(T.corr||0)<0?'neg':'')}${card('Acumulado Ajustado',eur(T.act+(T.corr||0)),pct((T.act+(T.corr||0))/T.tot)+' Executado','warn')}${card('Saldo Ajustado',eur(T.tot-T.act-(T.corr||0)),pct((T.tot-T.act-(T.corr||0))/T.tot)+' Por Executar','warn')}</div>`;
@@ -652,7 +654,7 @@ function buildPrint(){
     ${months(amsN,'Faturação Mensal TN (Total por AM)')}
     ${foot}
   </section>
-  <section class="pg">
+  <section class="pg tight">
     ${head('Trabalhos Complementares e a Menos · AM 01 a AM 14')}
     ${kp(TC,'TC')}
     ${rowsTbl(capsC,'TC')}
