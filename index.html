@@ -56,6 +56,20 @@ nav{display:flex;align-items:stretch;gap:2px;flex:1;flex-wrap:wrap}
 .tabs button.on{background:var(--acc);color:#fff}
 .dd-tc{max-height:70vh;overflow:auto;min-width:340px}
 .un{color:var(--ink3)}
+.capa{max-width:960px;margin:6px auto 0;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:28px 36px 30px;text-align:justify;hyphens:auto}
+.capa-h{border-bottom:1px solid var(--line2);padding-bottom:16px;margin-bottom:18px}
+.capa-t{font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.capa-s{color:var(--ink2);margin-bottom:14px}
+.capa-id{border-collapse:collapse;width:auto;min-width:0}
+.capa-id th{position:static;background:none;border:0;text-align:left;padding:2px 18px 2px 0;color:var(--ink2);font-weight:700;width:90px}
+.capa-id td{border:0;padding:2px 0}
+.capa-b h3{margin:14px 0 6px}
+.capa-b p{margin:0 0 6px}
+.capa b{font-weight:700}
+.car2{display:inline-block;width:0;height:0;border-left:5px solid var(--ink2);border-top:4px solid transparent;border-bottom:4px solid transparent;margin-right:5px;cursor:pointer;transform:rotate(90deg);transition:transform .15s;vertical-align:1px}
+.car2.c{transform:rotate(0)}
+.colbtn{border:1px solid var(--line2);background:var(--panel);border-radius:6px;padding:6px 10px;color:var(--ink2)}
+.colbtn:hover{background:var(--panel2);color:var(--ink)}
 .ng{color:var(--neg)}
 .kpi .v .ng{color:var(--neg)}
 nav .it{position:relative}
@@ -234,7 +248,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
           <button data-act="clearEdits">Apagar Todos os Ajustes</button>
         </div>
       </div>
-      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2621 v1 4081</span>
+      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2621 v1 5391</span>
     </div>
   </div>
 </header>
@@ -262,9 +276,10 @@ const DS={};
 let data = null;
 let edits = loadEdits();        // {key:{pct,obs}}
 let editMode = false;
-let view = {type:'resumo', cap:null, sub:null};
+let view = {type:'capa', cap:null, sub:null};
 let filter = '';
 let onlyEdited = false;
+const collapsed = {TN:new Set(),TC:new Set()};   // secções colapsadas por tabulador
 let amMode = 'both';            // 'both' | 'tot'
 let byKey = {}, children = {}, order = [];
 
@@ -393,6 +408,7 @@ function visibleRows(rootKeys){
 function renderNav(){
   const caps = data.rows.filter(r=>r.type==='cap');
   let h = `<div class="tabs">${Object.keys(TABS).map(k=>`<button data-tab="${k}" class="${tab===k?'on':''}" title="${TABS[k].label}">${k}</button>`).join('')}</div>`;
+  h += `<div class="it"><button data-v="capa" class="${view.type==='capa'?'on':''}">Capa</button></div>`;
   h += `<div class="it"><button data-v="resumo" class="${view.type==='resumo'?'on':''}">Resumo</button></div>`;
   h += `<div class="it"><button data-v="lpuam" class="${view.type==='lpuam'?'on':''}">LPU vs AM</button></div>`;
   if(tab==='TC'){
@@ -415,7 +431,8 @@ function shortName(s){ const m={'Trabalhos Preliminares':'Preliminares','Instala
 function render(){
   renderNav();
   const main=document.getElementById('main');
-  if(view.type==='resumo') main.innerHTML=renderResumo();
+  if(view.type==='capa') main.innerHTML=renderCapa();
+  else if(view.type==='resumo') main.innerHTML=renderResumo();
   else if(view.type==='lpuam') main.innerHTML=renderLpuAm();
   else main.innerHTML=renderCap();
   bindTable();
@@ -441,7 +458,56 @@ const LOCK='<svg class="ic lock" viewBox="0 0 24 24"><rect x="5" y="11" width="1
 function isValid(key){ const e=edits[ek('VAL:'+key)]; return !!(e&&e.obs); }
 function setValid(key,on){ const k=ek('VAL:'+key); if(on) edits[k]={obs:'1'}; else delete edits[k]; saveEdits(); queueSave(k); }
 function capLocked(c){ const subs=children[c.key].map(k=>byKey[k]).filter(s=>s.type==='sub'); return isValid(c.key) || (subs.length>0 && subs.every(s=>isValid(s.key))); }
+function sectionsOf(root){ const out=[]; (function walk(k){ (children[k]||[]).forEach(c=>{ if(byKey[c].type!=='item'&&(children[c]||[]).length){ out.push(c); walk(c); } }); })(root); return out; }
+function allCollapsed(root){ const s=sectionsOf(root); return s.length>0 && s.every(k=>collapsed[tab].has(k)); }
+function rerenderKeepScroll(){ const y=window.scrollY; render(); window.scrollTo(0,y); }
 function countAdj(n){ return itemsOf(n.key).filter(i=>edits[ek(i.key)]&&edits[ek(i.key)].pct).length; }
+
+/* ---------- Capa ---------- */
+function renderCapa(){
+  const TN=DS.TN.byKey['TTN'], TC=DS.TC.byKey['TTCm'];
+  const tot=TN.tot+TC.tot, act=TN.act+TC.act, corr=(TN.corr||0)+(TC.corr||0);
+  const exTN=TN.act/TN.tot, exTC=TC.act/TC.tot, exO=act/tot, exA=(act+corr)/tot;
+  // situações não conformes = artigos com ajuste, por tabulador e capítulo
+  const cur=tab; useTab('TN');
+  const adjTN=itemsOf('TTN').filter(i=>edits[ek(i.key)]&&edits[ek(i.key)].pct);
+  const capsTN=[...new Set(adjTN.map(i=>byKey[capOf(i.key)].desc))];
+  useTab('TC'); const adjTC=itemsOf('TTCm').filter(i=>edits[ek(i.key)]&&edits[ek(i.key)].pct); useTab(cur);
+  const lst=a=>a.length<=1?a.join(''):a.slice(0,-1).join(', ')+' e '+a[a.length-1];
+  const nc = adjTN.length ? `Foram detetadas ${adjTN.length} situação(ões) não conforme(s) nos TN, em ${lst(capsTN)}, explicadas nos Ajustes.` : 'Não foram detetadas situações não conformes nos TN.';
+  const ncTC = adjTC.length ? ` Nos TC foram detetadas ${adjTC.length} situação(ões), igualmente explicadas nos Ajustes.` : '';
+  return `<div class="capa">
+    <div class="capa-h">
+      <div class="capa-t">Auto de Situação</div>
+      <div class="capa-s">Execução Operacional vs Execução Financeira</div>
+      <table class="capa-id"><tbody>
+        <tr><th>Obra</th><td>Largo de São Domingos</td></tr>
+        <tr><th>Cliente</th><td>Double Power, Lda.</td></tr>
+        <tr><th>Fiscalização</th><td>Aceitar Sucessos, Lda.</td></tr>
+        <tr><th>Autor</th><td>João Paulo Padrão</td></tr>
+        <tr><th>Data</th><td>21/09/2026</td></tr>
+      </tbody></table>
+    </div>
+    <div class="capa-b">
+      <h3>Introdução</h3>
+      <p>A informação prestada baseia-se na análise de todos os Autos Mensais aprovados pela Fiscalização e validados pelo Dono de Obra, em contraponto com a realidade verificada em Obra até 18/09/2026.</p>
+      <h3>Análise</h3>
+      <p>Todos os Autos estão faturados, com exceção dos que se referem a Agosto — AM 17 nos TN e AM 14 nos TC — que ainda não estão aprovados pelo Dono de Obra.</p>
+      <p>Todos os Autos faturados estão pagos.</p>
+      <p>Considerando todos os Autos, Agosto incluído, estão executados <b>${pct(exTN)}</b> dos TN e <b>${pct(exTC)}</b> dos TC, o que perfaz <b>${pct(exO)}</b> da Obra (${eur(act)} em ${eur(tot)}).</p>
+      <p>${nc}${ncTC}</p>
+      <p>Considerados os Ajustes, na ordem dos <b>${eur(corr)}</b>, a execução passa para os <b>${pct(exA)}</b>.</p>
+      <p>Sugere-se que estas correções sejam incorporadas no último Auto — AM 17, ainda não aprovado — ou num Auto de Situação à parte.</p>
+      <h3>Considerações</h3>
+      <p>A eventual necessidade de um Ajuste nas Coberturas / Empenas não foi considerada, dada a ausência de ensaios, previstos para o dia 22/09.</p>
+      <p>Os Ralos, apontados pelo Dono de Obra como tendo "problemas" — situação com a qual a Fiscalização concorda — nunca foram faturados / pagos.</p>
+      <p>Relativamente à impermeabilização, que está totalmente executada, a Fiscalização só permitiu a faturação / pagamento de 50% do trabalho, exatamente para que os restantes 50% sejam validados aquando dos ensaios.</p>
+      <h3>Notas</h3>
+      <p>Os adiantamentos efetuados pelo Dono de Obra, e alvo de faturação à parte pelo Empreiteiro, à Casanova e à Topmarmi, foram vertidos nos Autos de Novembro de 2025 e Abril de 2026, sendo que as faturas desses Autos descontam os adiantamentos em causa para que, somadas, deem o valor total.</p>
+      <p>O TC 007, relativo à Estrutura Metálica, não será realizado e, por isso, o seu saldo será sempre igual ao aprovado inicialmente. A pedido do Dono de Obra, este trabalho acabou por ser faturado e pago diretamente pela Manteigaria.</p>
+    </div>
+  </div>`;
+}
 
 /* ---------- Resumo ---------- */
 function renderResumo(){
@@ -506,7 +572,8 @@ function renderLpuAm(){
 /* ---------- Capítulo / subcapítulo ---------- */
 function renderCap(){
   const root = view.sub || view.cap; const n=byKey[root]; const cap=byKey[view.cap];
-  const chk = `<label class="chk"><input type="checkbox" id="onlyEdited" ${onlyEdited?'checked':''}> Só Linhas c/Ajuste</label><label class="chk ${isValid(root)?'val':''}" title="${editMode?'Marcar este menu como analisado/validado':'Ative a edição para validar'}"><input type="checkbox" id="validado" ${isValid(root)?'checked':''} ${editMode?'':'disabled'}> Validado ${isValid(root)?LOCK:''}</label>`;
+  const allC = allCollapsed(root);
+  const chk = `<button class="colbtn" id="btnCol" title="${allC?'Expandir todas as secções':'Colapsar todas as secções'}">${allC?'Expandir Tudo':'Colapsar Tudo'}</button><label class="chk"><input type="checkbox" id="onlyEdited" ${onlyEdited?'checked':''}> Só Linhas c/Ajuste</label><label class="chk ${isValid(root)?'val':''}" title="${editMode?'Marcar este menu como analisado/validado':'Ative a edição para validar'}"><input type="checkbox" id="validado" ${isValid(root)?'checked':''} ${editMode?'':'disabled'}> Validado ${isValid(root)?LOCK:''}</label>`;
   let h = `<div class="view-h">${ctrlsHtml(chk)}</div>`;
   h += kpisFor(n);
   const rows = visibleRows([root]);
@@ -516,7 +583,8 @@ function renderCap(){
     <th class="r bl" title="Peso da linha no subcapítulo / do subcapítulo no capítulo / do capítulo no total">LPU</th><th class="r" title="Acumulado ÷ LPU">Acum</th><th class="r" title="Saldo ÷ LPU">Saldo</th>
     <th class="r bl" title="Ajuste em % do valor acumulado (− desconta, + acrescenta); se o acumulado for 0, aplica-se ao Total LPU">%</th><th class="r" title="Ajuste % × Acumulado (ou × Total LPU se acumulado = 0)">Valor</th></tr></thead><tbody>`;
   if(!rows.length) h+=`<tr><td colspan="99" class="empty">Sem resultados.</td></tr>`;
-  rows.forEach(({n,hit})=> h+=rowHtml(n,hit));
+  const col=collapsed[tab];
+  rows.forEach(({n,hit})=>{ if(!filter && n.key!==root && ancestors(n.key).some(a=>a!==root&&col.has(a)||a===root&&col.has(a))) return; h+=rowHtml(n,hit); });
   h += `</tbody></table></div></div>`;
   return h;
 }
@@ -525,7 +593,7 @@ function rowHtml(n,hit){
   const e=edits[ek(n.key)]||{}; const hasAdj=isItem&&e.pct;
   const val=isItem?(n.corr||0):(cont?(n.corr||0):null);
   return `<tr class="${n.type}${hit?' hit':''}${hasAdj?' hasadj':''}" data-key="${n.key}" style="--ind:${Math.max(0,n.level-2)*12}px">
-    <td class="id">${n.type==='total'?'':n.key}</td><td class="desc"><span class="t">${hilite(n.desc)}</span></td>
+    <td class="id">${(children[n.key]||[]).length?`<span class="car2 ${collapsed[tab].has(n.key)?'c':''}" data-tog="${n.key}" title="Colapsar / expandir"></span>`:''}${n.type==='total'?'':n.key}</td><td class="desc"><span class="t">${hilite(n.desc)}</span></td>
     <td class="num bl">${isItem?qty(n.q)+(n.un?' <span class="un">'+esc(n.un)+'</span>':''):''}</td><td class="num">${isItem?fmt(n.pu):''}</td><td class="num">${isItem||cont?fmt(n.tot):''}</td>
     <td class="num bl amQ">${isItem?qty(n.acq):''}</td><td class="num">${isItem||cont?fmt(n.act):''}</td>
     <td class="num bl amQ">${isItem?qty(n.sq):''}</td><td class="num">${isItem||cont?fmt(n.st):''}</td>
@@ -552,6 +620,20 @@ function splitTables(){
     // barra de scroll horizontal fixa ao fundo do ecrã (visível sem ir ao fim da tabela)
     let px=null; if(total>sc.clientWidth+2){ px=document.createElement('div'); px.className='hscroll'; px.innerHTML=`<div style="width:${total}px;height:1px"></div>`; w.appendChild(px); px.addEventListener('scroll',()=>{ if(sc.scrollLeft!==px.scrollLeft) sc.scrollLeft=px.scrollLeft; }); }
     hw.style.top=document.querySelector('header').offsetHeight+'px';
+    if(tb.classList.contains('rs')) centerNumbers(tb,widths);
+  });
+}
+const _cv=document.createElement('canvas').getContext('2d');
+function centerNumbers(tb,widths){
+  // alinhar à direita com indentação igual dos dois lados (como o Excel), para os números ficarem centrados sob o cabeçalho
+  _cv.font=getComputedStyle(tb).font;
+  const rows=[...tb.tBodies[0].rows];
+  widths.forEach((w,c)=>{
+    const tds=rows.map(r=>r.cells[c]).filter(td=>td&&(td.classList.contains('num')||td.classList.contains('pct')||td.classList.contains('val')));
+    if(!tds.length) return;
+    const maxW=Math.max(...tds.map(td=>_cv.measureText(td.textContent.trim()).width));
+    const pad=Math.max(8,Math.round((w-maxW)/2));
+    tds.forEach(td=>{ td.style.paddingRight=pad+'px'; });
   });
 }
 let rsT; window.addEventListener('resize',()=>{ clearTimeout(rsT); rsT=setTimeout(()=>{ if(document.getElementById('login').style.display==='none') render(); },200); });
@@ -562,6 +644,8 @@ function bindTable(){
   const q=document.getElementById('q');
   if(q){ q.addEventListener('input',()=>{ filter=q.value; const pos=q.selectionStart; render(); const nq=document.getElementById('q'); nq.focus(); nq.setSelectionRange(pos,pos); }); updCount(); }
   const oe=document.getElementById('onlyEdited'); if(oe) oe.addEventListener('change',()=>{ onlyEdited=oe.checked; render(); });
+  document.querySelectorAll('[data-tog]').forEach(s=>s.addEventListener('click',()=>{ const k=s.dataset.tog; const col=collapsed[tab]; col.has(k)?col.delete(k):col.add(k); rerenderKeepScroll(); }));
+  const bc=document.getElementById('btnCol'); if(bc) bc.addEventListener('click',()=>{ const root=view.sub||view.cap; const col=collapsed[tab]; if(allCollapsed(root)) sectionsOf(root).forEach(k=>col.delete(k)); else sectionsOf(root).forEach(k=>col.add(k)); rerenderKeepScroll(); });
   const vd=document.getElementById('validado'); if(vd) vd.addEventListener('change',()=>{ setValid(view.sub||view.cap, vd.checked); render(); });
   document.querySelectorAll('[data-am]').forEach(b=>b.addEventListener('click',()=>{ amMode=b.dataset.am; render(); }));
   document.querySelectorAll('td input[data-f]').forEach(inp=>{
