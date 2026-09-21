@@ -225,8 +225,9 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
   html,body{background:#fff!important;color:#1D262C}
   body>*:not(#print){display:none!important}
   #print{display:block;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:9.5pt;line-height:1.35}
-  #print .pkpis{font-size:8.5pt} #print .pkpis .l,#print .pkpis .s,#print .pmb,#print .pfoot,#print .pleg,#print .pleg2{font-size:8pt}
-  #print .pm-t{font-size:9pt}
+  #print .pg:not(.cover){font-size:8pt}
+  #print .pkpis{font-size:8pt} #print .pkpis .l,#print .pkpis .s,#print .pmb,#print .pfoot,#print .pleg,#print .pleg2{font-size:7.5pt}
+  #print .pm-t{font-size:8.5pt}
   .pg{page-break-after:always;position:relative;height:297mm;box-sizing:border-box;padding:11mm 12mm 7mm;display:flex;flex-direction:column;overflow:visible}
   .pg:last-child{page-break-after:auto}
   .plogo{width:27mm;display:block;margin:0 auto 3mm}
@@ -245,10 +246,11 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
   .pkpis{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:11mm}
   .pk{border:1px solid #D6D9D2;border-radius:6px;padding:8px 10px;background:#F6F7F4}
   .pk .l{color:#5A6670} .pk .v{font-weight:700} .pk .v.acc{color:#3E7EA6} .pk .v.warn{color:#C0742A} .pk .v.neg{color:#A8322A} .pk .s{color:#8A949C}
-  table.pt{font-size:8.5pt;table-layout:auto;min-width:0!important;width:100%;border-collapse:collapse;margin-bottom:11mm}
+  table.pt{font-size:8pt;table-layout:auto;min-width:0!important;width:100%;border-collapse:collapse;margin-bottom:11mm}
   .capa-id{min-width:0}
   table.pt th,table.pt td{border:0;border-bottom:1px solid #D6D9D2;padding:5px 5px;text-align:right;vertical-align:top;position:static;background:none;white-space:nowrap}
-  table.pt td[style*="left"]{white-space:normal}
+  table.pt td[style*="left"]{white-space:normal;text-align:justify!important;hyphens:auto}
+  table.pt .pobs{text-align:left!important;white-space:normal;min-width:34mm}
   table.pt th{background:#DCE9F1;font-weight:700;text-align:center;color:#1D262C}
   table.pt td:first-child{text-align:left;white-space:nowrap}
   table.pt tr.tot td{background:#F7E9DA;font-weight:700}
@@ -258,7 +260,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
   .tight .pkpis,.tight table.pt{margin-bottom:6mm} .tight .psub{margin-bottom:5mm}
   .pmb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;color:#8A949C;text-align:center;line-height:1.2}
   .pmb i{width:100%;background:#68A0C0;border-radius:2px 2px 0 0} .pmb b{font-weight:400;color:#5A6670;margin-bottom:2px} .pmb span{margin-top:3px;white-space:nowrap}
-  .pgrid{display:grid;grid-template-columns:1fr 1.3fr;gap:12px;margin-bottom:11mm;font-size:8.5pt}
+  .pgrid{display:grid;grid-template-columns:1fr 1.3fr;gap:12px;margin-bottom:11mm;font-size:8pt}
   .pbox{border:1px solid #D6D9D2;border-radius:6px;padding:14px 16px}
   .pdon{display:flex;align-items:center;gap:16px}
   .pdon svg{width:170px;height:170px}
@@ -309,7 +311,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
           <button data-act="clearEdits">Apagar Todos os Ajustes</button>
         </div>
       </div>
-      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2622 v1 0200</span>
+      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2622 v1 9200</span>
     </div>
   </div>
 </header>
@@ -557,10 +559,11 @@ function renderCapa(){
 }
 
 function capaSections(nc,ncTC,exTN,exTC,exO,exA,act,tot,corr){
+  const lastTN=DS.TN.byKey['TTN'].amT.slice(-1)[0]||0, lastTC=DS.TC.byKey['TTCm'].amT.slice(-1)[0]||0;
   return `<h3>Introdução:</h3>
       <p>A informação prestada baseia-se na análise de todos os Autos Mensais aprovados pela Fiscalização e validados pelo Dono de Obra, em contraponto com a realidade verificada em Obra até 18/09/2026.</p>
       <h3>Análise:</h3>
-      <p>Todos os Autos estão faturados, com exceção dos que se referem a Agosto — AM 17 nos TN e AM 14 nos TC — que ainda não estão aprovados pelo Dono de Obra.</p>
+      <p>Todos os Autos estão faturados, com exceção dos que se referem a Agosto — AM 17 nos TN (<b>${eur(lastTN)}</b>) e AM 14 nos TC (<b>${eur(lastTC)}</b>), num total de <b>${eur(lastTN+lastTC)}</b> — que ainda não estão aprovados pelo Dono de Obra.</p>
       <p>Todos os Autos faturados estão pagos.</p>
       <p>Considerando todos os Autos, Agosto incluído, estão executados <b>${pct(exTN)}</b> dos TN e <b>${pct(exTC)}</b> dos TC, o que perfaz <b>${pct(exO)}</b> da Obra (${eur(act)} em ${eur(tot)}).</p>
       <p>${nc}${ncTC}</p>
@@ -663,8 +666,8 @@ function buildPrint(){
   </section>
   ${adjRows.length?`<section class="pg">
     ${head('Ajustes propostos pela Fiscalização')}
-    <table class="pt"><thead><tr><th>Id</th><th>Cap./TC</th><th style="text-align:left">Artigo</th><th>Acumulado</th><th>Ajuste %</th><th>Valor</th><th style="text-align:left">Observações</th></tr></thead><tbody>
-      ${adjRows.map(r=>`<tr><td>${r.key}</td><td>${r.cap}</td><td style="text-align:left">${esc(r.desc)}</td><td>${eur(r.act)}</td><td>${fmt(r.pct,2)}%</td><td>${eur(r.corr)}</td><td style="text-align:left">${esc(r.obs)}</td></tr>`).join('')}
+    <table class="pt"><thead><tr><th>Id</th><th>Cap./TC</th><th style="text-align:left">Artigo</th><th>Acumulado</th><th>Ajuste %</th><th>Valor</th><th class="pobs">Observações</th></tr></thead><tbody>
+      ${adjRows.map(r=>`<tr><td>${r.key}</td><td>${r.cap}</td><td style="text-align:left">${esc(r.desc)}</td><td>${eur(r.act)}</td><td>${fmt(r.pct,2)}%</td><td>${eur(r.corr)}</td><td class="pobs">${esc(r.obs)}</td></tr>`).join('')}
       <tr class="tot"><td colspan="5" style="text-align:left">Total dos Ajustes</td><td>${eur(corr)}</td><td></td></tr>
     </tbody></table>
     ${foot}
