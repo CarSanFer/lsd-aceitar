@@ -221,12 +221,12 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
 /* ---------- impressão / PDF ---------- */
 #print{display:none}
 @media print{
-  @page{size:A4 portrait;margin:11mm 12mm 9mm}
+  @page{size:A4 portrait;margin:0}   /* margem 0 = o browser não imprime os seus cabeçalhos/rodapés (data, URL, n.º de página) */
   html,body{background:#fff!important;color:#1D262C}
   body>*:not(#print){display:none!important}
   #print{display:block;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-size:9.5pt;line-height:1.35}
   #print .pkpis .l,#print .pkpis .s,#print .pmb,#print .pfoot,#print .pleg,#print .pleg2{font-size:8.5pt}
-  .pg{page-break-after:always;position:relative;height:275mm;display:flex;flex-direction:column;overflow:visible}
+  .pg{page-break-after:always;position:relative;height:297mm;box-sizing:border-box;padding:11mm 12mm 7mm;display:flex;flex-direction:column;overflow:visible}
   .pg:last-child{page-break-after:auto}
   .plogo{width:27mm;display:block;margin:0 auto 3mm}
   .pcover{text-align:center;padding-bottom:4mm;margin-bottom:3mm;border-bottom:2px solid #68A0C0}
@@ -307,7 +307,7 @@ th.am small{display:block;font-weight:400;color:var(--ink3)}
           <button data-act="clearEdits">Apagar Todos os Ajustes</button>
         </div>
       </div>
-      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2621 v1 4412</span>
+      <span class="ver" id="ver"><i class="sbdot" id="sbdot" title="Supabase"></i>2621 v1 4332</span>
     </div>
   </div>
 </header>
@@ -568,6 +568,7 @@ function capaSections(nc,ncTC,exTN,exTC,exO,exA,act,tot,corr){
       <p>A eventual necessidade de um Ajuste nas Coberturas / Empenas não foi considerada, dada a ausência de ensaios, previstos para o dia 22/09.</p>
       <p>Os Ralos, apontados pelo Dono de Obra como tendo "problemas" — situação com a qual a Fiscalização concorda — nunca foram faturados / pagos.</p>
       <p>Relativamente à Impermeabilização, que está totalmente executada, a Fiscalização só permitiu a faturação / pagamento de 50% do trabalho, exatamente para que os restantes 50% sejam validados aquando dos ensaios.</p>
+      <p>A Fiscalização sempre pugnou pela defesa do Dono de Obra, como provam os factos acima e ainda outros relacionados com, por exemplo, trabalhos executados e não considerados nos Autos, como sejam a Recuperação das Grades (7 k€) ou a Limpeza das Fachadas (5 k€).</p>
       <h3>Notas:</h3>
       <p>Os adiantamentos efetuados pelo Dono de Obra, e alvo de faturação à parte pelo Empreiteiro, à Casanova e à Topmarmi, foram vertidos nos Autos de Novembro de 2025 e Abril de 2026, sendo que as faturas desses Autos descontam os adiantamentos em causa para que, somadas, deem o valor total.</p>
       <p>O TC 007, relativo à Estrutura Metálica, não será realizado e, por isso, o seu saldo será sempre igual ao aprovado inicialmente. A pedido do Dono de Obra, este trabalho acabou por ser faturado e pago diretamente pela Manteigaria.</p>`;
@@ -580,6 +581,7 @@ function printPdf(){
   const cur=document.documentElement.getAttribute('data-theme'); document.documentElement.setAttribute('data-theme','light');
   const done=()=>{ div.remove(); document.documentElement.setAttribute('data-theme',cur); window.removeEventListener('afterprint',done); };
   window.addEventListener('afterprint',done);
+  const oldTitle=document.title; document.title='Auto de Situação · Largo de São Domingos'; window.addEventListener('afterprint',()=>{ document.title=oldTitle; },{once:true});
   setTimeout(()=>window.print(),150);
 }
 function buildPrint(){
